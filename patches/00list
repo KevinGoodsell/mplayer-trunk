@@ -1,0 +1,10 @@
+10_get_version_from_changelog
+11_manpage_bad_option
+12_config_defaults
+13_mplayer.desktop_polish_translation
+14_fix_amd64_no_mmx_build
+
+40_make_changelog
+
+#50_dvdnav_no_minilibs
+#80_inhibit_gnome_screensaver

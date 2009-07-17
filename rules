@@ -1,0 +1,185 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+#
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+#
+# Modified to make a template file for a multi-binary package with separated
+# build-arch and build-indep targets  by Bill Allombert 2001
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+include /usr/share/dpatch/dpatch.make
+
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+ifeq "$(DEB_BUILD_ARCH)" "i386"
+	CONFIGURE_ARCH = --enable-runtime-cpudetection --target=i586-linux
+else ifeq "$(DEB_BUILD_ARCH)" "powerpc"
+	CONFIGURE_ARCH = --enable-runtime-cpudetection --enable-altivec --cc=gcc-4.2
+else ifeq "$(DEB_BUILD_ARCH)" "amd64"
+	CONFIGURE_ARCH = --enable-runtime-cpudetection
+endif
+
+CONFIGURE_PATH := --prefix=/usr --confdir=/etc/mplayer --mandir=/usr/share/man --win32codecsdir=/usr/lib/win32
+CONFIGURE_COMMON := --enable-largefiles
+CONFIGURE_INPUT :=  --disable-libdvdcss-internal --enable-smb --enable-ftp --enable-cdparanoia --enable-radio
+CONFIGURE_CONTROL := --enable-lirc --enable-joystick --enable-xf86keysym 
+CONFIGURE_AUDIO_CODECS := --disable-tremor-internal --enable-liba52 --enable-musepack --enable-speex --enable-libvorbis --enable-mad --enable-mp3lib
+CONFIGURE_VIDEO_CODECS := --enable-theora --enable-libdv --enable-libmpeg2 --enable-tv-v4l2
+CONFIGURE_AUDIO_OUT := --enable-alsa --enable-ossaudio --enable-esd --enable-pulse --enable-nas
+CONFIGURE_VIDEO_OUT := --enable-xinerama --enable-menu --enable-xv --enable-vm --enable-gl --enable-xmga --enable-mga --enable-3dfx --enable-tdfxfb --enable-sdl --enable-aa --enable-caca --enable-dxr3 --enable-xvmc --with-xvmclib=XvMCW --enable-ggi --enable-fbdev --disable-ivtv
+CONFIGURE_MISC := --enable-freetype --enable-gif --enable-png --enable-jpeg --enable-liblzo --enable-fribidi --enable-ladspa
+CONFIGURE_MEDIBUNTU := --enable-libamr_nb --enable-libamr_wb --enable-faac --extra-libs=-lfaac
+
+CONFIGURE_ALL := $(CONFIGURE_ARCH) $(CONFIGURE_PATH) $(CONFIGURE_COMMON) $(CONFIGURE_INPUT) $(CONFIGURE_CONTROL) $(CONFIGURE_AUDIO_CODECS) $(CONFIGURE_VIDEO_CODECS) $(CONFIGURE_AUDIO_OUT) $(CONFIGURE_VIDEO_OUT) $(CONFIGURE_MISC) $(CONFIGURE_MEDIBUNTU)
+
+config-gui: config-gui-stamp
+config-gui-stamp: configure patch-stamp
+	dh_testdir
+	./configure $(CONFIGURE_ALL) --enable-gui --enable-mencoder
+	mkdir -p debian/gui
+	cp -p config.mak config.h debian/gui
+	touch $@
+
+config-nogui: config-nogui-stamp
+config-nogui-stamp: configure patch-stamp
+	dh_testdir
+	./configure $(CONFIGURE_ALL) --disable-gui --disable-mencoder
+	mkdir -p debian/nogui
+	cp -p config.mak config.h debian/nogui
+	touch $@
+
+config-help: config-help-stamp
+config-help-stamp: config-gui-stamp DOCS/xml/configure
+	cp -p debian/gui/config.mak debian/gui/config.h .
+	cd DOCS/xml && ./configure
+	touch $@
+
+build-gui: build-gui-stamp
+build-gui-stamp: config-gui-stamp
+	dh_testdir
+
+	# If we've built the nogui version, we have to clean.
+	if [ -f building-nogui-stamp ]; then \
+		$(MAKE) distclean; \
+		rm -f building-nogui-stamp; \
+	fi
+
+	touch building-gui-stamp
+	cp -p debian/gui/config.mak debian/gui/config.h .
+	$(MAKE)
+
+	# Save things where they won't be cleaned when we build a different
+	# configuration
+	cp -p mplayer mencoder debian/gui
+
+	touch $@
+
+build-nogui: build-nogui-stamp
+build-nogui-stamp: config-nogui-stamp
+	dh_testdir
+
+	# If we've built the gui version, we have to clean.
+	if [ -f building-gui-stamp ]; then \
+		$(MAKE) distclean; \
+		rm -f building-gui-stamp; \
+	fi
+
+	touch building-nogui-stamp
+	cp -p debian/nogui/config.mak debian/nogui/config.h .
+	$(MAKE)
+
+	# Save things where they won't be cleaned when we build a different
+	# configuration
+	cp -p mplayer debian/nogui
+
+	touch $@
+
+build-help: build-help-stamp
+build-help-stamp: config-help-stamp
+	$(MAKE) -C DOCS/xml html-chunked
+	touch $@
+
+#Architecture
+build: build-arch-stamp
+
+build-arch: build-arch-stamp
+build-arch-stamp: build-gui-stamp build-nogui-stamp build-help-stamp
+	cp DOCS/man/en/mplayer.1 debian/mencoder.1
+	cp etc/example.conf debian/mplayer.conf
+	cp debian_upstream/mime debian/mplayer-trunk.mime
+	touch $@
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+
+	-$(MAKE) -C DOCS/xml distclean
+
+	# Add here commands to clean up after the build process.
+	[ ! -f Makefile ] || $(MAKE) distclean
+	rm -rf debian/nogui debian/gui building-gui-stamp building-nogui-stamp \
+		build-gui-stamp build-nogui-stamp debian/mencoder.1 \
+		debian/mplayer.conf debian/mplayer-trunk.mime config-gui-stamp \
+		config-nogui-stamp build-arch-stamp config-help-stamp
+
+	dh_clean 
+
+# Must not depend on anything. This is to be called by
+# binary-arch/binary-indep
+# in another 'make' thread.
+binary-common:
+	dh_testdir
+	dh_testroot
+	dh_installdirs
+	dh_install
+	dh_installchangelogs Changelog
+	dh_installdocs -A Copyright
+	dh_installexamples
+#	dh_installmenu
+#	dh_installdebconf
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+	dh_installmime
+	dh_desktop
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture independant packages using the common target.
+binary-indep:
+	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
+
+# Build architecture dependant packages using the common target.
+binary-arch: build-arch-stamp
+	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
+
+	# dh_link doesn't seem to want to do this for us:
+	ln -sf ../fonts/truetype/ttf-dejavu/DejaVuSans.ttf debian/mplayer-trunk/usr/share/mplayer/subfont.ttf
+	ln -sf ../fonts/truetype/ttf-dejavu/DejaVuSans.ttf debian/mplayer-trunk-nogui/usr/share/mplayer/subfont.ttf
+
+binary: binary-arch binary-indep
+.PHONY: build clean binary-indep binary-arch binary config-gui config-nogui \
+	build-arch build-gui build-nogui config-help build-help binary-common

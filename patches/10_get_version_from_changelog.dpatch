@@ -1,0 +1,21 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 10_get_version_from_changelog.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Use dpkg-parsechangelog to get the mplayer version.
+
+@DPATCH@
+diff -urNad mplayer-trunk~/version.sh mplayer-trunk/version.sh
+--- mplayer-trunk~/version.sh	2009-07-13 12:16:51.000000000 -0700
++++ mplayer-trunk/version.sh	2009-07-13 12:20:19.000000000 -0700
+@@ -11,8 +11,10 @@
+ test $svn_revision && svn_revision=SVN-r$svn_revision
+ test $svn_revision || svn_revision=UNKNOWN
+ 
++version=$(dpkg-parsechangelog | grep ^Version: | cut -d' ' -f 2)
++
+ # releases extract the version number from the VERSION file
+-version=$(cat VERSION 2> /dev/null)
++test $version || version=$(cat VERSION 2> /dev/null)
+ test $version || version=$svn_revision
+ 
+ NEW_REVISION="#define VERSION \"${version}${extra}\""

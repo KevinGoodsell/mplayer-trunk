@@ -1,0 +1,279 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 80_inhibit_gnome_screensaver.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Add support for disabling Gnome Screensaver. Combines patches from
+## DP: LP: #53947, LP: #104660, and LP: #108785 (at least).
+
+@DPATCH@
+diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
+--- mplayer-trunk~/Makefile	2009-07-15 18:16:21.000000000 -0700
++++ mplayer-trunk/Makefile	2009-07-15 18:25:27.000000000 -0700
+@@ -534,6 +534,7 @@
+ SRCS_MPLAYER-$(COREAUDIO)    += libao2/ao_coreaudio.c
+ SRCS_MPLAYER-$(COREVIDEO)    += libvo/vo_corevideo.m
+ SRCS_MPLAYER-$(DART)         += libao2/ao_dart.c
++SRCS_MPLAYER-$(DBUS_GLIB)    += libvo/gnome_screensaver.c
+ SRCS_MPLAYER-$(DFBMGA)       += libvo/vo_dfbmga.c
+ SRCS_MPLAYER-$(DGA)          += libvo/vo_dga.c
+ SRCS_MPLAYER-$(DIRECT3D)     += libvo/vo_direct3d.c libvo/w32_common.c
+diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
+--- mplayer-trunk~/configure	2009-07-15 18:25:14.000000000 -0700
++++ mplayer-trunk/configure	2009-07-15 18:25:27.000000000 -0700
+@@ -280,6 +280,7 @@
+   --disable-ftp          disable FTP support [enabled]
+   --disable-vstream      disable TiVo vstream client support [autodetect]
+   --disable-pthreads     disable Posix threads support [autodetect]
++  --disable-dbus-glib    Disable D-BUS GLib interface (required for GNOME screensaver support) [autodetect]
+   --disable-w32threads   disable Win32 threads support [autodetect]
+   --disable-ass          disable internal SSA/ASS subtitle support [autodetect]
+   --enable-rpath         enable runtime linker path for extra libs [disabled]
+@@ -735,6 +736,7 @@
+ _musepack=auto
+ _vstream=auto
+ _pthreads=auto
++_dbus_glib=auto
+ _w32threads=auto
+ _ass=auto
+ _rpath=no
+@@ -1240,6 +1242,8 @@
+   --disable-vstream)    _vstream=no     ;;
+   --enable-pthreads)    _pthreads=yes   ;;
+   --disable-pthreads)   _pthreads=no    ;;
++  --enable-dbus-glib)   _dbus_glib=yes  ;;
++  --disable-dbus-glib)  _dbus_glib=no   ;;
+   --enable-w32threads)  _w32threads=yes ;;
+   --disable-w32threads) _w32threads=no  ;;
+   --enable-ass)         _ass=yes        ;;
+@@ -7780,6 +7784,23 @@
+ echores "$_xmms"
+ 
+ 
++echocheck "D-BUS GLib interface"
++if test "$_dbus_glib" = auto; then
++  _dbus_glib=no
++  if test _pkg_config --exists dbus-glib-1 && "$_x11" = yes; then
++    _dbus_glib=yes
++    extra_cflags="$extra_cflags $(_pkg_config --cflags dbus-glib-1 2>/dev/null)"
++    libs_mplayer="$libs_mplayer $(_pkg_config --libs dbus-glib-1 2>/dev/null)"
++  fi
++fi
++
++if test "$_dbus_glib" = yes; then
++  def_dbus_glib='#define CONFIG_DBUS_GLIB 1'
++else
++  def_dbus_glib='#undef CONFIG_DBUS_GLIB'
++fi
++echores "$_dbus_glib"
++
+ # --------------- GUI specific tests begin -------------------
+ echocheck "GUI"
+ echo "$_gui"
+@@ -8218,6 +8239,7 @@
+ COREAUDIO = $_coreaudio
+ COREVIDEO = $_corevideo
+ DART = $_dart
++DBUS_GLIB = $_dbus_glib
+ DFBMGA = $_dfbmga
+ DGA = $_dga
+ DIRECT3D = $_direct3d
+@@ -8568,6 +8590,7 @@
+ /* configurable options */
+ $def_charset
+ $def_crash_debug
++$def_dbus_glib
+ $def_debug
+ $def_dynamic_plugins
+ $def_fastmemcpy
+diff -urNad mplayer-trunk~/help/help_mp-en.h mplayer-trunk/help/help_mp-en.h
+--- mplayer-trunk~/help/help_mp-en.h	2009-07-15 18:16:21.000000000 -0700
++++ mplayer-trunk/help/help_mp-en.h	2009-07-15 18:25:27.000000000 -0700
+@@ -530,6 +530,13 @@
+ #define MSGTR_LOADER_DYLD_Warning "WARNING: Attempting to use DLL codecs but environment variable\n         DYLD_BIND_AT_LAUNCH not set. This will likely crash.\n"
+ 
+ 
++// gnome_screensaver.c
++#define MSGTR_OpenBusConnectionError "%s: Failed to open connection to bus: %s\n"
++#define MSGTR_RemoteMethodException "%s: Caught remote method exception %s: %s\n"
++#define MSGTR_GError "%s: Error: %s\n"
++#define MSGTR_GNOMEScreensaverEnabled "GNOME screensaver enabled\n"
++#define MSGTR_GNOMEScreensaverDisabled "GNOME screensaver disabled\n"
++
+ // ====================== GUI messages/buttons ========================
+ 
+ // --- labels ---
+diff -urNad mplayer-trunk~/libvo/gnome_screensaver.c mplayer-trunk/libvo/gnome_screensaver.c
+--- mplayer-trunk~/libvo/gnome_screensaver.c	1969-12-31 16:00:00.000000000 -0800
++++ mplayer-trunk/libvo/gnome_screensaver.c	2009-07-15 18:25:27.000000000 -0700
+@@ -0,0 +1,124 @@
++/*
++ * gnome_screensaver.c v0.0.7
++ *
++ * Enable/Disable the GNOME screensaver
++ * Supports GNOME screensaver API 2.14 and 2.15
++ *
++ * Call gnome_screensaver_control(1) to enable and
++ * gnome_screensaver_control(0) to disable
++ *
++ */
++
++#include <stdlib.h>
++#include <unistd.h>
++#include <dbus/dbus-glib.h>
++
++#include "gnome_screensaver.h"
++#include "mp_msg.h"
++#include "help_mp.h"
++
++#define GS_SERVICE   "org.gnome.ScreenSaver"
++#define GS_PATH      "/org/gnome/ScreenSaver"
++#define GS_INTERFACE "org.gnome.ScreenSaver"
++
++#define GS_APPLICATION_NAME     "MPlayer"
++#define GS_REASON_FOR_INHIBIT   "Playing a movie"
++
++#if defined(ARCH_X86_64)
++  static guint64 cookie;
++#else
++  static guint32 cookie;
++#endif
++
++void gnome_screensaver_control(int enable)
++{
++    DBusGConnection *connection;
++    GError *error;
++    DBusGProxy *proxy;
++    gboolean ret;
++    char *funcname = "gnome_screensaver_control()";
++
++    g_type_init();
++
++    /* Get a connection to the session bus */
++    error = NULL;
++    connection = dbus_g_bus_get(DBUS_BUS_SESSION, &error);
++    if (connection == NULL) {
++        mp_msg(MSGT_VO, MSGL_V,
++               funcname, MSGTR_OpenBusConnectionError, error->message);
++        g_error_free(error);
++        return;
++    }
++
++    /* Create a proxy object */
++    proxy = dbus_g_proxy_new_for_name(connection,
++                                      GS_SERVICE, GS_PATH, GS_INTERFACE);
++
++    /* Enable the screensaver */
++    if (enable) {
++        /* First call the GNOME screensaver 2.15 API method */
++        error = NULL;
++        ret =
++            dbus_g_proxy_call(proxy, "UnInhibit", &error, G_TYPE_UINT,
++                              cookie, G_TYPE_INVALID, G_TYPE_INVALID);
++
++        /* If this fails, try the GNOME screensaver 2.14 API */
++        if (!ret && error->domain == DBUS_GERROR
++            && error->code == DBUS_GERROR_UNKNOWN_METHOD) {
++            mp_msg(MSGT_VO, MSGL_V,
++                   "%s: GNOME screensaver 2.15 API failed, trying 2.14 API\n",
++                   funcname);
++            g_error_free(error);
++            error = NULL;
++            ret =
++                dbus_g_proxy_call(proxy, "AllowActivation", &error,
++                                  G_TYPE_INVALID, G_TYPE_INVALID);
++        }
++    }
++    /* Disable the screensaver */
++    else {
++        /* First call the GNOME screensaver 2.15 API method */
++        error = NULL;
++        ret =
++            dbus_g_proxy_call(proxy, "Inhibit", &error, G_TYPE_STRING,
++                              GS_APPLICATION_NAME, G_TYPE_STRING,
++                              GS_REASON_FOR_INHIBIT, G_TYPE_INVALID,
++                              G_TYPE_UINT, cookie, G_TYPE_INVALID);
++
++        /* If this fails, try the GNOME screensaver 2.14 API */
++        if (!ret && error->domain == DBUS_GERROR
++            && error->code == DBUS_GERROR_UNKNOWN_METHOD) {
++            mp_msg(MSGT_VO, MSGL_V,
++                   "%s: GNOME screensaver 2.15 API failed, trying 2.14 API\n",
++                   funcname);
++            g_error_free(error);
++            error = NULL;
++            ret =
++                dbus_g_proxy_call(proxy, "InhibitActivation", &error,
++                                  G_TYPE_STRING, GS_REASON_FOR_INHIBIT,
++                                  G_TYPE_INVALID, G_TYPE_INVALID);
++        }
++    }
++
++    if (!ret) {
++        /* Check if it's a remote exception or a regular GError */
++        if (error->domain == DBUS_GERROR
++            && error->code == DBUS_GERROR_REMOTE_EXCEPTION) {
++            mp_msg(MSGT_VO, MSGL_V,
++                   funcname, MSGTR_RemoteMethodException,
++                   dbus_g_error_get_name(error), error->message);
++        }
++        else {
++            mp_msg(MSGT_VO, MSGL_V,
++                   funcname, MSGTR_GError, error->message);
++        }
++        g_error_free(error);
++    }
++    else {
++        mp_msg(MSGT_VO, MSGL_INFO,
++               enable ? MSGTR_GNOMEScreensaverEnabled :
++               MSGTR_GNOMEScreensaverDisabled);
++    }
++
++    g_object_unref(proxy);
++}
+diff -urNad mplayer-trunk~/libvo/gnome_screensaver.h mplayer-trunk/libvo/gnome_screensaver.h
+--- mplayer-trunk~/libvo/gnome_screensaver.h	1969-12-31 16:00:00.000000000 -0800
++++ mplayer-trunk/libvo/gnome_screensaver.h	2009-07-15 18:25:27.000000000 -0700
+@@ -0,0 +1,6 @@
++#ifndef _GNOME_SCREENSAVER_H
++#define _GNOME_SCREENSAVER_H
++
++extern void gnome_screensaver_control(int enable);
++
++#endif /* !_GNOME_SCREENSAVER_H */
+diff -urNad mplayer-trunk~/libvo/x11_common.c mplayer-trunk/libvo/x11_common.c
+--- mplayer-trunk~/libvo/x11_common.c	2009-07-15 18:16:21.000000000 -0700
++++ mplayer-trunk/libvo/x11_common.c	2009-07-15 18:25:27.000000000 -0700
+@@ -80,6 +80,10 @@
+ #include "mplayer.h"
+ #endif
+ 
++#ifdef CONFIG_DBUS_GLIB
++#include "gnome_screensaver.h"
++#endif
++
+ #define WIN_LAYER_ONBOTTOM               2
+ #define WIN_LAYER_NORMAL                 4
+ #define WIN_LAYER_ONTOP                  6
+@@ -1472,6 +1476,11 @@
+     if (!screensaver_off)
+         return;
+     screensaver_off = 0;
++#ifdef CONFIG_DBUS_GLIB
++    if (stop_xscreensaver) {
++        gnome_screensaver_control(1);
++    }
++#endif
+     if (xss_suspend(False))
+         return;
+ #ifdef CONFIG_XDPMS
+@@ -1513,6 +1522,11 @@
+     if (screensaver_off)
+         return;
+     screensaver_off = 1;
++#ifdef CONFIG_DBUS_GLIB
++    if (stop_xscreensaver) {
++        gnome_screensaver_control(0);
++    }
++#endif
+     if (xss_suspend(True))
+         return;
+ #ifdef CONFIG_XDPMS

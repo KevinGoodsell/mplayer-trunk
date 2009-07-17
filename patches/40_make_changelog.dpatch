@@ -1,0 +1,30 @@
+#!/bin/sh
+## 40_make_changelog.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Create a Debian changelog file using the svn revision in the version
+## DP: number.
+
+set -e
+
+operation=$1
+working_dir=$2
+
+[ "$working_dir" ] && cd "$working_dir"
+
+if [ "$operation" = "-patch" ]; then
+    rev=$(svn info | sed -n 's/^Revision: \([0-9]\+\)$/\1/p')
+
+    cat <<EOF > debian/changelog
+mplayer-trunk (${rev}-1) jaunty; urgency=low
+
+  * Packaging mplayer from Subversion.
+
+ -- Kevin Goodsell <kevin-opensource@omegacrash.net>  $(date -R)
+EOF
+    
+elif [ "$operation" = "-unpatch" ]; then
+    rm -f debian/changelog
+else
+    echo "Unknown option $operation"
+    exit 1
+fi

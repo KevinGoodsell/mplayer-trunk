@@ -1,0 +1,26 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 11_manpage_bad_option.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Remove mention of non-existent option -vo aa:help. Original patch by
+## DP: Christian Bjaelevik. LP: #43301
+
+@DPATCH@
+diff -urNad mplayer-trunk~/DOCS/man/en/mplayer.1 mplayer-trunk/DOCS/man/en/mplayer.1
+--- mplayer-trunk~/DOCS/man/en/mplayer.1	2009-07-14 10:03:17.000000000 -0700
++++ mplayer-trunk/DOCS/man/en/mplayer.1	2009-07-14 10:04:07.000000000 -0700
+@@ -3917,15 +3917,6 @@
+ .TP
+ .B "aa\ \ \ \ \ "
+ ASCII art video output driver that works on a text console.
+-You can get a list and an explanation of available suboptions
+-by executing 'mplayer \-vo aa:help'.
+-.br
+-.I NOTE:
+-The driver does not handle \-aspect correctly.
+-.br
+-.I HINT:
+-You probably have to specify \-monitorpixelaspect.
+-Try 'mplayer \-vo aa \-monitorpixelaspect 0.5'.
+ .
+ .TP
+ .B "caca\ \ \ "

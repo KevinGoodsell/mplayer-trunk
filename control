@@ -1,0 +1,97 @@
+Source: mplayer-trunk
+Section: graphics
+Priority: extra
+Maintainer: Kevin Goodsell <kevin-opensource@omegacrash.net>
+Build-Depends: dpatch, debhelper (>= 7), libncurses5-dev, libesd0-dev, liblircclient-dev, libgtk2.0-dev, libvorbis-dev, libsdl1.2-dev, sharutils, libasound2-dev (>= 1.0.1), liblzo-dev, gawk, libjpeg62-dev, libaudiofile-dev, libsmbclient-dev, libxv-dev, libpng3-dev, libgif-dev, libcdparanoia0-dev, libxvidcore4-dev, libdv-dev, liblivemedia-dev (>= 2004.05.01), libfreetype6-dev, em8300-headers, libgl1-mesa-dev | libgl-dev, libdvdread-dev, libdts-dev, libtheora-dev, libglu1-mesa-dev | libglu-dev, libfontconfig-dev, libxxf86dga-dev, libxinerama-dev, libxxf86vm-dev, libmp3lame-dev | liblame-dev, libxvmc-dev, libggi2-dev, ttf-bitstream-vera, libmpcdec-dev, libspeex-dev, libfribidi-dev, libfaac-dev (>=1.26), sed (>= 4.0), libaa1-dev, libcaca-dev, libx264-dev (>= 1:0.cvs20060720), libpulse-dev, libmad0-dev, ladspa-sdk, libdbus-glib-1-dev, libaudio-dev, liblzo2-dev, libdvdnav-dev, libopenal-dev, libjack-dev, libtwolame-dev, libsvga1-dev [i386 amd64], libenca-dev, gcc-4.2 [powerpc], libamrnb-dev, libamrwb-dev, libfaac-dev
+Standards-Version: 3.8.0
+Homepage: http://www.mplayerhq.hu/
+
+Package: mplayer-trunk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera, mplayer-skins, ttf-dejavu
+Suggests: w32codecs, libdvdcss, mplayer-trunk-doc, ladspa-sdk
+Conflicts: mplayer, mplayer-nogui, mplayer-trunk-nogui
+Replaces: mplayer, mplayer-nogui, mplayer-trunk-nogui
+Provides: mplayer
+Description: The Ultimate Movie Player For Linux
+ It plays most mpeg, avi and asf files, supported by many native and win32
+ DLL codecs. You can watch VCD, DVD and even DivX movies too. The other
+ big feature of mplayer is the wide range of supported output drivers. It
+ works with X11, Xv, DGA, OpenGL, SVGAlib, fbdev, but you can use SDL (and
+ this way all drivers of SDL) and some lowlevel card-specific drivers (for
+ Matrox/3dfx/SiS) too! Most of them supports software or hardware scaling,
+ so you can enjoy movies in fullscreen.
+ .
+ This package is built from recent Subversion source, making it
+ significantly more up-to-date than the standard mplayer packages. This
+ provides the latest features and bug-fixes, but with the risk of new
+ bugs and less stability.
+ .
+ This version includes the Gtk GUI.
+ .
+ This package is based on the Medibuntu package and is built with faac
+ and amr support enabled.
+
+Package: mplayer-trunk-nogui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera
+Suggests: w32codecs, libdvdcss, mplayer-trunk-doc, ladspa-sdk
+Conflicts: mplayer, mplayer-nogui, mplayer-trunk
+Replaces: mplayer, mplayer-nogui, mplayer-trunk
+Provides: mplayer
+Description: The Ultimate Movie Player For Linux
+ It plays most mpeg, avi and asf files, supported by many native and win32
+ DLL codecs. You can watch VCD, DVD and even DivX movies too. The other
+ big feature of mplayer is the wide range of supported output drivers. It
+ works with X11, Xv, DGA, OpenGL, SVGAlib, fbdev, but you can use SDL (and
+ this way all drivers of SDL) and some lowlevel card-specific drivers (for
+ Matrox/3dfx/SiS) too! Most of them supports software or hardware scaling,
+ so you can enjoy movies in fullscreen.
+ .
+ This package is built from recent Subversion source, making it
+ significantly more up-to-date than the standard mplayer packages. This
+ provides the latest features and bug-fixes, but with the risk of new
+ bugs and less stability.
+ .
+ This version comes with no GUI
+ .
+ This package is based on the Medibuntu package and is built with faac
+ and amr support enabled.
+
+Package: mencoder-trunk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: w32codecs, libdvdcss, mplayer-trunk-doc
+Conflicts: mencoder
+Replaces: mencoder
+Provides: mencoder
+Description: MPlayer's Movie Encoder
+ A simple movie encoder, designed to encode MPlayer-playable movies
+ (AVI/ASF/OGG/DVD/VCD/VOB/MPG/MOV/VIV/FLI/RM/NUV/NET) to other
+ MPlayer-playable formats. It can encode with various codecs, like DivX4 (1
+ or 2 passes), libavcodec, PCM/MP3/VBRMP3 audio. Also has stream copying and
+ video resizing abilities.
+ .
+ This package is built from recent Subversion source, making it
+ significantly more up-to-date than the standard mplayer packages. This
+ provides the latest features and bug-fixes, but with the risk of new
+ bugs and less stability.
+ .
+ This package is based on the Medibuntu package and is built with faac
+ and amr support enabled.
+
+Package: mplayer-trunk-doc
+Architecture: all
+Conflicts: mplayer-doc
+Replaces: mplayer-doc
+Provides: mplayer-doc
+Description: The Ultimate Movie Player For Linux (Documentation)
+ It plays most mpeg, avi and asf files, supported by many native and win32
+ DLL codecs. You can watch VCD, DVD and even DivX movies too. The other
+ big feature of mplayer is the wide range of supported output drivers. It
+ works with X11, Xv, DGA, OpenGL, SVGAlib, fbdev, but you can use SDL (and
+ this way all drivers of SDL) and some lowlevel card-specific drivers (for
+ Matrox/3dfx/SiS) too! Most of them supports software or hardware scaling,
+ so you can enjoy movies in fullscreen.
+ .
+ This package contains the documentation for mplayer/mencoder

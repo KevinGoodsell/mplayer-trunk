@@ -1,0 +1,4 @@
+debian/nogui/mplayer usr/bin
+etc/input.conf etc/mplayer
+etc/menu.conf etc/mplayer
+debian/mplayer.conf etc/mplayer

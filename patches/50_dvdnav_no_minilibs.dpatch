@@ -1,0 +1,27 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 50_dvdnav_no_minilibs.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Don't use dvdnav minilibs. I don't know what the point of this is.
+
+@DPATCH@
+diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
+--- mplayer-trunk~/configure	2009-07-12 23:23:31.000000000 -0700
++++ mplayer-trunk/configure	2009-07-14 11:33:04.000000000 -0700
+@@ -8085,7 +8085,7 @@
+     dvdnav_internal=yes
+     _res_comment="internal"
+   else
+-    $_dvdnavconfig --version --minilibs >> $TMPLOG 2>&1 || _dvdnav=no
++    $_dvdnavconfig --version --libs >> $TMPLOG 2>&1 || _dvdnav=no
+   fi
+ fi
+ if test "$_dvdnav" = auto ; then
+@@ -8107,7 +8107,7 @@
+     _inputmodules="dvdnav(internal) $_inputmodules"
+   else
+     extra_cflags="$extra_cflags $($_dvdnavconfig --cflags)"
+-    extra_ldflags="$extra_ldflags $($_dvdnavconfig --minilibs)"
++    extra_ldflags="$extra_ldflags $($_dvdnavconfig --libs)"
+     _inputmodules="dvdnav $_inputmodules"
+   fi
+ else

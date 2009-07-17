@@ -1,0 +1,6 @@
+debian/gui/mplayer usr/bin
+etc/input.conf etc/mplayer
+etc/menu.conf etc/mplayer
+debian/mplayer.conf etc/mplayer
+etc/mplayer.desktop usr/share/applications
+etc/mplayer.xpm usr/share/pixmaps
