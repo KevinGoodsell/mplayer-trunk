@@ -37,7 +37,10 @@ CONFIGURE_VIDEO_CODECS := --enable-theora --enable-libdv --enable-libmpeg2 --ena
 CONFIGURE_AUDIO_OUT := --enable-alsa --enable-ossaudio --enable-esd --enable-pulse --enable-nas
 CONFIGURE_VIDEO_OUT := --enable-xinerama --enable-menu --enable-xv --enable-vm --enable-gl --enable-xmga --enable-mga --enable-3dfx --enable-tdfxfb --enable-sdl --enable-aa --enable-caca --enable-dxr3 --enable-xvmc --with-xvmclib=XvMCW --enable-ggi --enable-fbdev --disable-ivtv
 CONFIGURE_MISC := --enable-freetype --enable-gif --enable-png --enable-jpeg --enable-liblzo --enable-fribidi --enable-ladspa
-CONFIGURE_MEDIBUNTU := --enable-libamr_nb --enable-libamr_wb --enable-faac --extra-libs=-lfaac
+CONFIGURE_MEDIBUNTU := --enable-faac --extra-libs=-lfaac
+# AMR support disabled until opencore_amr packages become available. Remember
+# to add a build dependency in the control file, also.
+#CONFIGURE_MEDIBUNTU += --enable-libopencore_amrnb --enable-libopencore_amrwb
 
 CONFIGURE_ALL := $(CONFIGURE_ARCH) $(CONFIGURE_PATH) $(CONFIGURE_COMMON) $(CONFIGURE_INPUT) $(CONFIGURE_CONTROL) $(CONFIGURE_AUDIO_CODECS) $(CONFIGURE_VIDEO_CODECS) $(CONFIGURE_AUDIO_OUT) $(CONFIGURE_VIDEO_OUT) $(CONFIGURE_MISC) $(CONFIGURE_MEDIBUNTU)
 
