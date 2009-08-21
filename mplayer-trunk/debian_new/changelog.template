@@ -1,0 +1,5 @@
+mplayer-trunk (#SVN_REV#-1) jaunty; urgency=low
+
+  * Packaging mplayer from Subversion.
+
+ -- Kevin Goodsell <kevin-opensource@omegacrash.net>  #DATE#

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# This script should update/create the following:
+# - svn working dir
+# - changelog
+# - debian_upstream dir
+# - debian symlink?
+
+set -e
+
+url='svn://svn.mplayerhq.hu/mplayer/trunk'
+
+cd mplayer-trunk
+
+if [ -d debian_upstream ]; then
+    rm debian
+    mv debian_upstream debian
+    svn update
+else
+    svn checkout $url .
+fi
+
+mv debian debian_upstream
+ln -s debian_new debian
+
+rev=$(svn info | sed -n 's/^Revision: \([0-9]\+\)$/\1/p')
+date=$(date -R)
+sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/" debian_new/changelog.template > debian_new/changelog
