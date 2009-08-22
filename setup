@@ -1,10 +1,12 @@
 #!/bin/sh
 
-# This script should update/create the following:
-# - svn working dir
-# - changelog
-# - debian_upstream dir
-# - debian symlink?
+# This is a basic script to checkout the mplayer source from svn and set things
+# up for building source and binary packages. This includes creating the
+# debian/changelog file and replacing mplayer's debian directory with our own.
+#
+# It also updates existing svn source if it's already been checked out.
+#
+# Currently this is very simple and probably won't handle errors very well.
 
 set -e
 
@@ -13,16 +15,20 @@ url='svn://svn.mplayerhq.hu/mplayer/trunk'
 cd mplayer-trunk
 
 if [ -d debian_upstream ]; then
-    rm debian
+    # Looks like we already have the source, so do an update. But, first we
+    # have to restore the original debian dir.
+    rm debian   # delete the symlink to debian_new
     mv debian_upstream debian
     svn update
 else
     svn checkout $url .
 fi
 
+# Replace mplayer's debian directory with ours.
 mv debian debian_upstream
 ln -s debian_new debian
 
+# Generate a changelog from the template in debian_new/changelog.template.
 rev=$(svn info | sed -n 's/^Revision: \([0-9]\+\)$/\1/p')
 date=$(date -R)
 sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/" debian_new/changelog.template > debian_new/changelog
