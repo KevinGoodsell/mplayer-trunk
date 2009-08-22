@@ -47,7 +47,7 @@ CONFIGURE_ALL := $(CONFIGURE_ARCH) $(CONFIGURE_PATH) $(CONFIGURE_COMMON) $(CONFI
 config-gui: config-gui-stamp
 config-gui-stamp: configure patch-stamp
 	dh_testdir
-	./configure $(CONFIGURE_ALL) --enable-gui --enable-mencoder
+	CFLAGS= ./configure $(CONFIGURE_ALL) --enable-gui --enable-mencoder
 	mkdir -p debian/gui
 	cp -p config.mak config.h debian/gui
 	touch $@
@@ -55,7 +55,7 @@ config-gui-stamp: configure patch-stamp
 config-nogui: config-nogui-stamp
 config-nogui-stamp: configure patch-stamp
 	dh_testdir
-	./configure $(CONFIGURE_ALL) --disable-gui --disable-mencoder
+	CFLAGS= ./configure $(CONFIGURE_ALL) --disable-gui --disable-mencoder
 	mkdir -p debian/nogui
 	cp -p config.mak config.h debian/nogui
 	touch $@
