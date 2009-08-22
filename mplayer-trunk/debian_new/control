@@ -82,6 +82,7 @@ Description: MPlayer's Movie Encoder
 
 Package: mplayer-trunk-doc
 Architecture: all
+Section: doc
 Conflicts: mplayer-doc
 Replaces: mplayer-doc
 Provides: mplayer-doc

@@ -145,8 +145,8 @@ binary-common:
 	dh_installdirs
 	dh_install
 	dh_installchangelogs Changelog
-	dh_installdocs -A Copyright
-	dh_installexamples
+	dh_installdocs -A Copyright -X .svn
+	dh_installexamples -X .svn
 #	dh_installmenu
 #	dh_installdebconf
 #	dh_installlogrotate
