@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# Script to build a non-native source package.
+# This is tricky because it requires:
+#  1) An original source archive
+#  2) A specially-named source directory
+#  3) The 'debian' dir must not be replaced with a symlink
+
+set -e
+
+rev=$(svn info mplayer-trunk | sed 's/^Revision:\s\+\([0-9]\+\).*/\1/p;d')
+orig="mplayer-trunk_$rev.orig"
+srcdir="mplayer-trunk-$rev"
+
+echo ==== Restoring upstream source ====
+
+cd mplayer-trunk
+
+if [ -L debian ]; then
+    fakeroot ./debian/rules clean
+    rm debian
+fi
+
+cd ..
+
+echo ==== Building .orig tarball ====
+
+mkdir $orig
+rsync -a --exclude=/.gitignore --exclude=.svn --exclude=/debian_new \
+    mplayer-trunk/ $orig
+tar -czf "$orig.tar.gz" $orig
+rm -r $orig
+
+echo ==== Setting up source ====
+
+cd mplayer-trunk
+mv debian_new debian
+cd ..
+
+mv mplayer-trunk $srcdir
+
+echo ==== Building source package ====
+
+cd $srcdir
+dpkg-buildpackage -rfakeroot -i -S
+cd ..
+
+echo ==== Restoring source ====
+
+mv $srcdir mplayer-trunk
+cd mplayer-trunk
+mv debian debian_new
+ln -s debian_new debian
