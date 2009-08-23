@@ -12,6 +12,22 @@ set -e
 
 url='svn://svn.mplayerhq.hu/mplayer/trunk'
 
+path_rev() {
+    path=$1
+    [ $path ] || path=.
+
+    svn info $path | sed 's/^Revision:\s\+\([0-9]\+\).*/\1/p;d'
+}
+
+external_revs() {
+    svn propget svn:externals | cut -f 1 | \
+    while read external; do
+        [ $external ] || break
+
+        echo $external: $(path_rev $external)
+    done
+}
+
 cd mplayer-trunk
 
 if [ -d debian_upstream ]; then
@@ -29,6 +45,8 @@ mv debian debian_upstream
 ln -s debian_new debian
 
 # Generate a changelog from the template in debian_new/changelog.template.
-rev=$(svn info | sed -n 's/^Revision: \([0-9]\+\)$/\1/p')
+rev=$(path_rev)
 date=$(date -R)
-sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/" debian_new/changelog.template > debian_new/changelog
+externals=$(external_revs | sed 's/.*/    - &/' | sed -n '1{h;d};H;${g;s/\n/\\n/gp}')
+sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/;s/#EXTERNAL_REVS#/$externals/" \
+  debian_new/changelog.template > debian_new/changelog
