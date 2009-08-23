@@ -179,10 +179,6 @@ binary-indep:
 binary-arch: build-arch-stamp
 	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
 
-	# dh_link doesn't seem to want to do this for us:
-	ln -sf ../fonts/truetype/ttf-dejavu/DejaVuSans.ttf debian/mplayer-trunk/usr/share/mplayer/subfont.ttf
-	ln -sf ../fonts/truetype/ttf-dejavu/DejaVuSans.ttf debian/mplayer-trunk-nogui/usr/share/mplayer/subfont.ttf
-
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary config-gui config-nogui \
 	build-arch build-gui build-nogui config-help build-help binary-common
