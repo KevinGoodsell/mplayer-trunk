@@ -21,7 +21,6 @@ cpudetect.c
 cpudetect.h
 cpuinfo.c
 debian
-debian_new/changelog
 debian_upstream
 DOCS
 drivers
