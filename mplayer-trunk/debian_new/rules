@@ -48,6 +48,7 @@ config-gui: config-gui-stamp
 config-gui-stamp: configure patch-stamp
 	dh_testdir
 	CFLAGS= ./configure $(CONFIGURE_ALL) --enable-gui --enable-mencoder
+	echo 'MPLAYER_REMOVE_LIBS = -latk-1.0 -lpangocairo-1.0 -laudiofile -lgio-2.0 -lgmodule-2.0 -lpango-1.0 -lcairo -lXvMC -lXt -ldbus-1 -llzo2 -lgdk_pixbuf-2.0 -lpangoft2-1.0' >> config.mak
 	mkdir -p debian/gui
 	cp -p config.mak config.h debian/gui
 	touch $@
@@ -56,6 +57,7 @@ config-nogui: config-nogui-stamp
 config-nogui-stamp: configure patch-stamp
 	dh_testdir
 	CFLAGS= ./configure $(CONFIGURE_ALL) --disable-gui --disable-mencoder
+	echo 'MPLAYER_REMOVE_LIBS = -ldbus-1 -lXt -llzo2 -lx264 -lfaac -laudiofile -lXvMC' >> config.mak
 	mkdir -p debian/nogui
 	cp -p config.mak config.h debian/nogui
 	touch $@

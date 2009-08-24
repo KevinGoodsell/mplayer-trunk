@@ -1,0 +1,25 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 30_unused_libs.dpatch by Kevin Goodsell <kevin-opensource@omegacrash.net>
+##
+## DP: Hack to remove unused libraries from the link command. This is paired
+## DP: changes to config.mak made in the debian/rules file. Fixing the
+## DP: configure script to not add unused libraries would be better, but a
+## DP: lot more complicated.
+
+@DPATCH@
+diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
+--- mplayer-trunk~/Makefile	2009-08-24 13:13:26.000000000 -0700
++++ mplayer-trunk/Makefile	2009-08-24 13:38:43.000000000 -0700
+@@ -27,8 +27,10 @@
+ COMMON_LDFLAGS += $(EXTRA_LIB)\
+                   $(EXTRALIBS) \
+ 
+-LDFLAGS_MPLAYER = $(EXTRALIBS_MPLAYER) \
+-                  $(COMMON_LDFLAGS) \
++LDFLAGS_MPLAYER := $(EXTRALIBS_MPLAYER) \
++                   $(COMMON_LDFLAGS) \
++
++LDFLAGS_MPLAYER := $(filter-out $(MPLAYER_REMOVE_LIBS),$(LDFLAGS_MPLAYER))
+ 
+ LDFLAGS_MENCODER = $(EXTRALIBS_MENCODER) \
+                    $(COMMON_LDFLAGS) \
