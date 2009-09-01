@@ -8,7 +8,7 @@ Homepage: http://www.mplayerhq.hu/
 
 Package: mplayer-trunk
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera, mplayer-skins, ttf-dejavu
+Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera, ttf-dejavu
 Suggests: w32codecs, libdvdcss, mplayer-trunk-doc, ladspa-sdk
 Conflicts: mplayer, mplayer-nogui, mplayer-trunk-nogui
 Replaces: mplayer, mplayer-nogui, mplayer-trunk-nogui
