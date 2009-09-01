@@ -45,8 +45,10 @@ mv debian debian_upstream
 ln -s debian_new debian
 
 # Generate a changelog from the template in debian_new/changelog.template.
+CHANGELOG="debian_new/changelog"
+[ -e "$CHANGELOG" ] && mv "$CHANGELOG" "${CHANGELOG}.prev"
 rev=$(path_rev)
 date=$(date -R)
 externals=$(external_revs | sed 's/.*/    - &/' | sed -n '1{h;d};H;${g;s/\n/\\n/gp}')
 sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/;s/#EXTERNAL_REVS#/$externals/" \
-  debian_new/changelog.template > debian_new/changelog
+  "${CHANGELOG}.template" > "$CHANGELOG"
