@@ -122,9 +122,9 @@ build-arch-stamp: build-gui-stamp build-nogui-stamp build-help-stamp
 	cp etc/example.conf debian/mplayer.conf
 	cp debian_upstream/mime debian/mplayer-trunk.mime
 	mkdir debian/skins
-	tar xf debian/Blue-1.7.tar.bz2 -C debian/skins
-	tar xf debian/clearplayer-0.9.tar.bz2 -C debian/skins
-	tar xf debian/mini-0.1.tar.bz2 -C debian/skins
+	tar xf skins/Blue-1.7.tar.bz2 -C debian/skins
+	tar xf skins/clearplayer-0.9.tar.bz2 -C debian/skins
+	tar xf skins/mini-0.1.tar.bz2 -C debian/skins
 	touch $@
 
 clean: unpatch
