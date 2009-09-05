@@ -28,21 +28,17 @@ external_revs() {
     done
 }
 
+# Restore original svn source
+./source original
+
 cd mplayer-trunk
 
-if [ -d debian_upstream ]; then
-    # Looks like we already have the source, so do an update. But, first we
-    # have to restore the original debian dir.
-    rm debian   # delete the symlink to debian_new
-    mv debian_upstream debian
+if [ -d debian ]; then
+    # Looks like we already have the source, so do an update.
     svn update
 else
     svn checkout $url .
 fi
-
-# Replace mplayer's debian directory with ours.
-mv debian debian_upstream
-ln -s debian_new debian
 
 # Generate a changelog from the template in debian_new/changelog.template.
 CHANGELOG="debian_new/changelog"
@@ -52,3 +48,8 @@ date=$(date -R)
 externals=$(external_revs | sed 's/.*/    - &/' | sed -n '1{h;d};H;${g;s/\n/\\n/gp}')
 sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/;s/#EXTERNAL_REVS#/$externals/" \
   "${CHANGELOG}.template" > "$CHANGELOG"
+
+cd ..
+
+# Replace mplayer's debian directory with ours.
+./source modified

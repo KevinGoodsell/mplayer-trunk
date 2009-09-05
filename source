@@ -1,0 +1,48 @@
+#!/bin/sh
+
+set -e
+
+status() {
+    if [ mplayer-trunk/debian -ef mplayer-trunk/debian_new -a \
+         -d mplayer-trunk/debian_upstream ]; then
+        echo modified
+        return
+    fi
+
+    if [ ! -L mplayer-trunk/debian -a \
+         ! -e mplayer-trunk/debian_upstream ]; then
+        echo original
+        return
+    fi
+
+    echo corrupted
+}
+
+modified() {
+    [ "$(status)" = "modified" ] && return
+
+    mv mplayer-trunk/debian mplayer-trunk/debian_upstream
+    ln -s debian_new mplayer-trunk/debian
+}
+
+original() {
+    [ "$(status)" = "original" ] && return
+
+    rm -f mplayer-trunk/debian
+    mv mplayer-trunk/debian_upstream mplayer-trunk/debian
+}
+
+case "$1" in
+    modified)
+        modified
+        ;;
+    original)
+        original
+        ;;
+    "")
+        status
+        ;;
+    *)
+        echo "Unknown command '$1'" > /dev/stderr
+        ;;
+esac
