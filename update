@@ -42,12 +42,27 @@ fi
 
 # Generate a changelog from the template in debian_new/changelog.template.
 CHANGELOG="debian_new/changelog"
-[ -e "$CHANGELOG" ] && mv "$CHANGELOG" "${CHANGELOG}.prev"
 rev=$(path_rev)
 date=$(date -R)
 externals=$(external_revs | sed 's/.*/    - &/' | sed -n '1{h;d};H;${g;s/\n/\\n/gp}')
 sed "s/#SVN_REV#/$rev/;s/#DATE#/$date/;s/#EXTERNAL_REVS#/$externals/" \
-  "${CHANGELOG}.template" > "$CHANGELOG"
+  "${CHANGELOG}.template" > "${CHANGELOG}.new"
+
+# Don't replace an equivalent changelog.
+if [ -e "$CHANGELOG" ]; then
+    # Compare without the timestamp
+    old=$(head --lines=-1 ${CHANGELOG} | md5sum)
+    new=$(head --lines=-1 ${CHANGELOG}.new | md5sum)
+
+    if [ "$old" = "$new" ]; then
+        rm ${CHANGELOG}.new
+    else
+        mv ${CHANGELOG} ${CHANGELOG}.prev
+        mv ${CHANGELOG}.new $CHANGELOG
+    fi
+else
+    mv ${CHANGELOG}.new $CHANGELOG
+fi
 
 cd ..
 
