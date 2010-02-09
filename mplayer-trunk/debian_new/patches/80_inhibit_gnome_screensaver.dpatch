@@ -6,36 +6,36 @@
 
 @DPATCH@
 diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
---- mplayer-trunk~/Makefile	2009-08-23 16:34:50.000000000 -0700
-+++ mplayer-trunk/Makefile	2009-08-23 16:44:24.000000000 -0700
-@@ -535,6 +535,7 @@
+--- mplayer-trunk~/Makefile	2010-02-09 11:18:22.000000000 -0800
++++ mplayer-trunk/Makefile	2010-02-09 11:35:03.000000000 -0800
+@@ -539,6 +539,7 @@
  SRCS_MPLAYER-$(COREAUDIO)    += libao2/ao_coreaudio.c
- SRCS_MPLAYER-$(COREVIDEO)    += libvo/vo_corevideo.m
+ SRCS_MPLAYER-$(COREVIDEO)    += libvo/vo_corevideo.m libvo/osx_common.c
  SRCS_MPLAYER-$(DART)         += libao2/ao_dart.c
 +SRCS_MPLAYER-$(DBUS_GLIB)    += libvo/gnome_screensaver.c
  SRCS_MPLAYER-$(DFBMGA)       += libvo/vo_dfbmga.c
  SRCS_MPLAYER-$(DGA)          += libvo/vo_dga.c
  SRCS_MPLAYER-$(DIRECT3D)     += libvo/vo_direct3d.c libvo/w32_common.c
 diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
---- mplayer-trunk~/configure	2009-08-23 16:34:50.000000000 -0700
-+++ mplayer-trunk/configure	2009-08-23 16:45:38.000000000 -0700
-@@ -280,6 +280,7 @@
+--- mplayer-trunk~/configure	2010-02-09 11:18:22.000000000 -0800
++++ mplayer-trunk/configure	2010-02-09 11:35:03.000000000 -0800
+@@ -279,6 +279,7 @@
    --disable-ftp          disable FTP support [enabled]
    --disable-vstream      disable TiVo vstream client support [autodetect]
    --disable-pthreads     disable Posix threads support [autodetect]
 +  --disable-dbus-glib    Disable D-BUS GLib interface (required for GNOME screensaver support) [autodetect]
    --disable-w32threads   disable Win32 threads support [autodetect]
-   --disable-ass          disable internal SSA/ASS subtitle support [autodetect]
-   --enable-rpath         enable runtime linker path for extra libs [disabled]
-@@ -735,6 +736,7 @@
+   --disable-ass-internal disable internal SSA/ASS subtitle support [autodetect]
+   --disable-ass          disable SSA/ASS subtitle support [autodetect]
+@@ -755,6 +756,7 @@
  _musepack=auto
  _vstream=auto
  _pthreads=auto
 +_dbus_glib=auto
  _w32threads=auto
  _ass=auto
- _rpath=no
-@@ -1240,6 +1242,8 @@
+ ass_internal=yes
+@@ -1269,6 +1271,8 @@
    --disable-vstream)    _vstream=no     ;;
    --enable-pthreads)    _pthreads=yes   ;;
    --disable-pthreads)   _pthreads=no    ;;
@@ -44,7 +44,7 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
    --enable-w32threads)  _w32threads=yes ;;
    --disable-w32threads) _w32threads=no  ;;
    --enable-ass)         _ass=yes        ;;
-@@ -7780,6 +7784,23 @@
+@@ -8121,6 +8125,23 @@
  echores "$_xmms"
  
  
@@ -68,7 +68,7 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
  # --------------- GUI specific tests begin -------------------
  echocheck "GUI"
  echo "$_gui"
-@@ -8218,6 +8239,7 @@
+@@ -8567,6 +8588,7 @@
  COREAUDIO = $_coreaudio
  COREVIDEO = $_corevideo
  DART = $_dart
@@ -76,7 +76,7 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
  DFBMGA = $_dfbmga
  DGA = $_dga
  DIRECT3D = $_direct3d
-@@ -8572,6 +8594,7 @@
+@@ -8942,6 +8964,7 @@
  /* configurable options */
  $def_charset
  $def_crash_debug
@@ -85,9 +85,9 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
  $def_dynamic_plugins
  $def_fastmemcpy
 diff -urNad mplayer-trunk~/help/help_mp-en.h mplayer-trunk/help/help_mp-en.h
---- mplayer-trunk~/help/help_mp-en.h	2009-08-23 16:34:50.000000000 -0700
-+++ mplayer-trunk/help/help_mp-en.h	2009-08-23 16:44:24.000000000 -0700
-@@ -530,6 +530,13 @@
+--- mplayer-trunk~/help/help_mp-en.h	2010-02-09 11:18:22.000000000 -0800
++++ mplayer-trunk/help/help_mp-en.h	2010-02-09 11:35:03.000000000 -0800
+@@ -531,6 +531,13 @@
  #define MSGTR_LOADER_DYLD_Warning "WARNING: Attempting to use DLL codecs but environment variable\n         DYLD_BIND_AT_LAUNCH not set. This will likely crash.\n"
  
  
@@ -103,7 +103,7 @@ diff -urNad mplayer-trunk~/help/help_mp-en.h mplayer-trunk/help/help_mp-en.h
  // --- labels ---
 diff -urNad mplayer-trunk~/libvo/gnome_screensaver.c mplayer-trunk/libvo/gnome_screensaver.c
 --- mplayer-trunk~/libvo/gnome_screensaver.c	1969-12-31 16:00:00.000000000 -0800
-+++ mplayer-trunk/libvo/gnome_screensaver.c	2009-08-23 16:44:24.000000000 -0700
++++ mplayer-trunk/libvo/gnome_screensaver.c	2010-02-09 11:35:03.000000000 -0800
 @@ -0,0 +1,124 @@
 +/*
 + * gnome_screensaver.c v0.0.7
@@ -231,7 +231,7 @@ diff -urNad mplayer-trunk~/libvo/gnome_screensaver.c mplayer-trunk/libvo/gnome_s
 +}
 diff -urNad mplayer-trunk~/libvo/gnome_screensaver.h mplayer-trunk/libvo/gnome_screensaver.h
 --- mplayer-trunk~/libvo/gnome_screensaver.h	1969-12-31 16:00:00.000000000 -0800
-+++ mplayer-trunk/libvo/gnome_screensaver.h	2009-08-23 16:44:24.000000000 -0700
++++ mplayer-trunk/libvo/gnome_screensaver.h	2010-02-09 11:35:03.000000000 -0800
 @@ -0,0 +1,6 @@
 +#ifndef _GNOME_SCREENSAVER_H
 +#define _GNOME_SCREENSAVER_H
@@ -240,8 +240,8 @@ diff -urNad mplayer-trunk~/libvo/gnome_screensaver.h mplayer-trunk/libvo/gnome_s
 +
 +#endif /* !_GNOME_SCREENSAVER_H */
 diff -urNad mplayer-trunk~/libvo/x11_common.c mplayer-trunk/libvo/x11_common.c
---- mplayer-trunk~/libvo/x11_common.c	2009-08-23 16:34:50.000000000 -0700
-+++ mplayer-trunk/libvo/x11_common.c	2009-08-23 16:44:24.000000000 -0700
+--- mplayer-trunk~/libvo/x11_common.c	2010-02-09 11:18:21.000000000 -0800
++++ mplayer-trunk/libvo/x11_common.c	2010-02-09 11:35:03.000000000 -0800
 @@ -80,6 +80,10 @@
  #include "mplayer.h"
  #endif
@@ -253,7 +253,7 @@ diff -urNad mplayer-trunk~/libvo/x11_common.c mplayer-trunk/libvo/x11_common.c
  #define WIN_LAYER_ONBOTTOM               2
  #define WIN_LAYER_NORMAL                 4
  #define WIN_LAYER_ONTOP                  6
-@@ -1472,6 +1476,11 @@
+@@ -1479,6 +1483,11 @@
      if (!screensaver_off)
          return;
      screensaver_off = 0;
@@ -265,7 +265,7 @@ diff -urNad mplayer-trunk~/libvo/x11_common.c mplayer-trunk/libvo/x11_common.c
      if (xss_suspend(False))
          return;
  #ifdef CONFIG_XDPMS
-@@ -1513,6 +1522,11 @@
+@@ -1520,6 +1529,11 @@
      if (screensaver_off)
          return;
      screensaver_off = 1;

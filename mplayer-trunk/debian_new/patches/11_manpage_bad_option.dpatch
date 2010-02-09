@@ -6,9 +6,9 @@
 
 @DPATCH@
 diff -urNad mplayer-trunk~/DOCS/man/en/mplayer.1 mplayer-trunk/DOCS/man/en/mplayer.1
---- mplayer-trunk~/DOCS/man/en/mplayer.1	2009-07-14 10:03:17.000000000 -0700
-+++ mplayer-trunk/DOCS/man/en/mplayer.1	2009-07-14 10:04:07.000000000 -0700
-@@ -3917,15 +3917,6 @@
+--- mplayer-trunk~/DOCS/man/en/mplayer.1	2010-02-04 11:33:39.000000000 -0800
++++ mplayer-trunk/DOCS/man/en/mplayer.1	2010-02-04 13:14:14.000000000 -0800
+@@ -4044,15 +4044,6 @@
  .TP
  .B "aa\ \ \ \ \ "
  ASCII art video output driver that works on a text console.

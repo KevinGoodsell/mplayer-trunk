@@ -5,9 +5,9 @@
 
 @DPATCH@
 diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
---- mplayer-trunk~/configure	2009-07-12 23:23:31.000000000 -0700
-+++ mplayer-trunk/configure	2009-07-14 11:33:04.000000000 -0700
-@@ -8085,7 +8085,7 @@
+--- mplayer-trunk~/configure	2010-02-09 11:18:22.000000000 -0800
++++ mplayer-trunk/configure	2010-02-09 11:32:23.000000000 -0800
+@@ -8434,7 +8434,7 @@
      dvdnav_internal=yes
      _res_comment="internal"
    else
@@ -16,7 +16,7 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
    fi
  fi
  if test "$_dvdnav" = auto ; then
-@@ -8107,7 +8107,7 @@
+@@ -8456,7 +8456,7 @@
      _inputmodules="dvdnav(internal) $_inputmodules"
    else
      extra_cflags="$extra_cflags $($_dvdnavconfig --cflags)"
