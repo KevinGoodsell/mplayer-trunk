@@ -2,13 +2,13 @@ Source: mplayer-trunk
 Section: graphics
 Priority: extra
 Maintainer: Kevin Goodsell <kevin-opensource@omegacrash.net>
-Build-Depends: dpatch, debhelper (>= 7), libncurses5-dev, libesd0-dev, liblircclient-dev, libgtk2.0-dev, libvorbis-dev, libsdl1.2-dev, sharutils, libasound2-dev (>= 1.0.1), liblzo2-dev, gawk, libjpeg62-dev, libaudiofile-dev, libsmbclient-dev, libxv-dev, libpng3-dev, libgif-dev, libcdparanoia0-dev, libxvidcore4-dev, libdv-dev, liblivemedia-dev (>= 2004.05.01), libfreetype6-dev, em8300-headers, libgl1-mesa-dev | libgl-dev, libdvdread-dev, libdts-dev, libtheora-dev, libglu1-mesa-dev | libglu-dev, libfontconfig-dev, libxxf86dga-dev, libxinerama-dev, libxxf86vm-dev, libmp3lame-dev | liblame-dev, libxvmc-dev, libggi2-dev, ttf-bitstream-vera, libmpcdec-dev, libspeex-dev, libfribidi-dev, libfaac-dev (>=1.26), sed (>= 4.0), libaa1-dev, libcaca-dev, libx264-dev (>= 1:0.cvs20060720), libpulse-dev, libmad0-dev, ladspa-sdk, libdbus-glib-1-dev, libaudio-dev, liblzo2-dev, libdvdnav-dev, libopenal-dev, libjack-dev, libtwolame-dev, libsvga1-dev [i386 amd64], libenca-dev, gcc-4.2 [powerpc], libfaac-dev, libxext-dev, docbook-xml, docbook-xsl, xsltproc, libxml2-utils
+Build-Depends: dpatch, debhelper (>= 7), libncurses5-dev, libesd0-dev, liblircclient-dev, libgtk2.0-dev, libvorbis-dev, libsdl1.2-dev, sharutils, libasound2-dev (>= 1.0.1), liblzo2-dev, gawk, libjpeg62-dev, libaudiofile-dev, libsmbclient-dev, libxv-dev, libpng3-dev, libgif-dev, libcdparanoia0-dev, libxvidcore4-dev, libdv-dev, liblivemedia-dev (>= 2004.05.01), libfreetype6-dev, em8300-headers, libgl1-mesa-dev | libgl-dev, libdvdread-dev, libdts-dev, libtheora-dev, libglu1-mesa-dev | libglu-dev, libfontconfig-dev, libxxf86dga-dev, libxinerama-dev, libxxf86vm-dev, libmp3lame-dev | liblame-dev, libxvmc-dev, libggi2-dev, libmpcdec-dev, libspeex-dev, libfribidi-dev, libfaac-dev (>=1.26), sed (>= 4.0), libaa1-dev, libcaca-dev, libx264-dev (>= 1:0.cvs20060720), libpulse-dev, libmad0-dev, ladspa-sdk, libdbus-glib-1-dev, libaudio-dev, liblzo2-dev, libdvdnav-dev, libopenal-dev, libjack-dev, libtwolame-dev, libsvga1-dev [i386 amd64], libenca-dev, gcc-4.2 [powerpc], libfaac-dev, libxext-dev, docbook-xml, docbook-xsl, xsltproc, libxml2-utils, liba52-dev
 Standards-Version: 3.8.0
 Homepage: http://www.mplayerhq.hu/
 
 Package: mplayer-trunk
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera, ttf-dejavu
+Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-dejavu
 Suggests: w32codecs, libdvdcss, mplayer-trunk-doc, ladspa-sdk
 Conflicts: mplayer, mplayer-nogui, mplayer-trunk-nogui
 Replaces: mplayer, mplayer-nogui, mplayer-trunk-nogui
@@ -34,7 +34,7 @@ Description: The Ultimate Movie Player For Linux
 
 Package: mplayer-trunk-nogui
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-bitstream-vera
+Depends: ${shlibs:Depends}, ${misc:Depends}, ttf-dejavu
 Suggests: w32codecs, libdvdcss, mplayer-trunk-doc, ladspa-sdk
 Conflicts: mplayer, mplayer-nogui, mplayer-trunk
 Replaces: mplayer, mplayer-nogui, mplayer-trunk
