@@ -8,18 +8,19 @@
 
 @DPATCH@
 diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
---- mplayer-trunk~/Makefile	2009-08-24 13:13:26.000000000 -0700
-+++ mplayer-trunk/Makefile	2009-08-24 13:38:43.000000000 -0700
-@@ -27,8 +27,10 @@
- COMMON_LDFLAGS += $(EXTRA_LIB)\
-                   $(EXTRALIBS) \
+--- mplayer-trunk~/Makefile	2010-02-10 10:31:15.000000000 -0800
++++ mplayer-trunk/Makefile	2010-02-10 10:33:41.000000000 -0800
+@@ -850,10 +850,12 @@
  
--LDFLAGS_MPLAYER = $(EXTRALIBS_MPLAYER) \
--                  $(COMMON_LDFLAGS) \
-+LDFLAGS_MPLAYER := $(EXTRALIBS_MPLAYER) \
-+                   $(COMMON_LDFLAGS) \
-+
-+LDFLAGS_MPLAYER := $(filter-out $(MPLAYER_REMOVE_LIBS),$(LDFLAGS_MPLAYER))
+ mencoder$(EXESUF): $(MENCODER_DEPS)
+ mencoder$(EXESUF): EXTRALIBS += $(EXTRALIBS_MENCODER)
++mencoder$(EXESUF): REMOVE_LIBS =
+ mplayer$(EXESUF): $(MPLAYER_DEPS)
+ mplayer$(EXESUF): EXTRALIBS += $(EXTRALIBS_MPLAYER)
++mplayer$(EXESUF): REMOVE_LIBS = $(MPLAYER_REMOVE_LIBS)
+ mencoder$(EXESUF) mplayer$(EXESUF):
+-	$(CC) -o $@ $^ $(EXTRALIBS)
++	$(CC) -o $@ $^ $(filter-out $(REMOVE_LIBS),$(EXTRALIBS))
  
- LDFLAGS_MENCODER = $(EXTRALIBS_MENCODER) \
-                    $(COMMON_LDFLAGS) \
+ codec-cfg$(EXESUF): codec-cfg.c help_mp.h
+ 	$(HOST_CC) -O -DCODECS2HTML -I. -o $@ $<
