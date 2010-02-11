@@ -6,8 +6,8 @@
 
 @DPATCH@
 diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
---- mplayer-trunk~/Makefile	2010-02-09 11:18:22.000000000 -0800
-+++ mplayer-trunk/Makefile	2010-02-09 11:35:03.000000000 -0800
+--- mplayer-trunk~/Makefile	2010-02-11 13:28:52.000000000 -0800
++++ mplayer-trunk/Makefile	2010-02-11 13:28:53.000000000 -0800
 @@ -539,6 +539,7 @@
  SRCS_MPLAYER-$(COREAUDIO)    += libao2/ao_coreaudio.c
  SRCS_MPLAYER-$(COREVIDEO)    += libvo/vo_corevideo.m libvo/osx_common.c
@@ -17,8 +17,8 @@ diff -urNad mplayer-trunk~/Makefile mplayer-trunk/Makefile
  SRCS_MPLAYER-$(DGA)          += libvo/vo_dga.c
  SRCS_MPLAYER-$(DIRECT3D)     += libvo/vo_direct3d.c libvo/w32_common.c
 diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
---- mplayer-trunk~/configure	2010-02-09 11:18:22.000000000 -0800
-+++ mplayer-trunk/configure	2010-02-09 11:35:03.000000000 -0800
+--- mplayer-trunk~/configure	2010-02-11 13:09:50.000000000 -0800
++++ mplayer-trunk/configure	2010-02-11 13:28:53.000000000 -0800
 @@ -279,6 +279,7 @@
    --disable-ftp          disable FTP support [enabled]
    --disable-vstream      disable TiVo vstream client support [autodetect]
@@ -76,7 +76,7 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
  DFBMGA = $_dfbmga
  DGA = $_dga
  DIRECT3D = $_direct3d
-@@ -8942,6 +8964,7 @@
+@@ -8934,6 +8956,7 @@
  /* configurable options */
  $def_charset
  $def_crash_debug
@@ -85,8 +85,8 @@ diff -urNad mplayer-trunk~/configure mplayer-trunk/configure
  $def_dynamic_plugins
  $def_fastmemcpy
 diff -urNad mplayer-trunk~/help/help_mp-en.h mplayer-trunk/help/help_mp-en.h
---- mplayer-trunk~/help/help_mp-en.h	2010-02-09 11:18:22.000000000 -0800
-+++ mplayer-trunk/help/help_mp-en.h	2010-02-09 11:35:03.000000000 -0800
+--- mplayer-trunk~/help/help_mp-en.h	2010-02-10 11:36:36.000000000 -0800
++++ mplayer-trunk/help/help_mp-en.h	2010-02-11 13:28:53.000000000 -0800
 @@ -531,6 +531,13 @@
  #define MSGTR_LOADER_DYLD_Warning "WARNING: Attempting to use DLL codecs but environment variable\n         DYLD_BIND_AT_LAUNCH not set. This will likely crash.\n"
  
@@ -103,7 +103,7 @@ diff -urNad mplayer-trunk~/help/help_mp-en.h mplayer-trunk/help/help_mp-en.h
  // --- labels ---
 diff -urNad mplayer-trunk~/libvo/gnome_screensaver.c mplayer-trunk/libvo/gnome_screensaver.c
 --- mplayer-trunk~/libvo/gnome_screensaver.c	1969-12-31 16:00:00.000000000 -0800
-+++ mplayer-trunk/libvo/gnome_screensaver.c	2010-02-09 11:35:03.000000000 -0800
++++ mplayer-trunk/libvo/gnome_screensaver.c	2010-02-11 13:28:53.000000000 -0800
 @@ -0,0 +1,124 @@
 +/*
 + * gnome_screensaver.c v0.0.7
@@ -231,7 +231,7 @@ diff -urNad mplayer-trunk~/libvo/gnome_screensaver.c mplayer-trunk/libvo/gnome_s
 +}
 diff -urNad mplayer-trunk~/libvo/gnome_screensaver.h mplayer-trunk/libvo/gnome_screensaver.h
 --- mplayer-trunk~/libvo/gnome_screensaver.h	1969-12-31 16:00:00.000000000 -0800
-+++ mplayer-trunk/libvo/gnome_screensaver.h	2010-02-09 11:35:03.000000000 -0800
++++ mplayer-trunk/libvo/gnome_screensaver.h	2010-02-11 13:28:53.000000000 -0800
 @@ -0,0 +1,6 @@
 +#ifndef _GNOME_SCREENSAVER_H
 +#define _GNOME_SCREENSAVER_H
@@ -240,8 +240,8 @@ diff -urNad mplayer-trunk~/libvo/gnome_screensaver.h mplayer-trunk/libvo/gnome_s
 +
 +#endif /* !_GNOME_SCREENSAVER_H */
 diff -urNad mplayer-trunk~/libvo/x11_common.c mplayer-trunk/libvo/x11_common.c
---- mplayer-trunk~/libvo/x11_common.c	2010-02-09 11:18:21.000000000 -0800
-+++ mplayer-trunk/libvo/x11_common.c	2010-02-09 11:35:03.000000000 -0800
+--- mplayer-trunk~/libvo/x11_common.c	2010-02-10 11:36:36.000000000 -0800
++++ mplayer-trunk/libvo/x11_common.c	2010-02-11 13:28:53.000000000 -0800
 @@ -80,6 +80,10 @@
  #include "mplayer.h"
  #endif
