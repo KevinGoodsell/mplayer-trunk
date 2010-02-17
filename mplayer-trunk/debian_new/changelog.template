@@ -1,4 +1,4 @@
-mplayer-trunk (#SVN_REV#-1) jaunty; urgency=low
+mplayer-trunk (#SVN_REV#-1) unstable; urgency=low
 
   * Packaging mplayer from Subversion.
   * External revisions:
